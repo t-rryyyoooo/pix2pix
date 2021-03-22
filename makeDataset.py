@@ -24,21 +24,27 @@ def main(args):
     data_iter = sorted(data_iter)
 
     save_dir = Path(args.save_dir)
+    save_dir.mkdir(parents=True, exist_ok=True)
     for i, data in enumerate(data_iter):
         image_array = cv2.imread(str(data))
         left_array, right_array = splitImages(image_array)
 
-        #left_path = save_dir / "input_{}.npy".format(str(i).zfill(3))
-        #right_path = save_dir / "target_{}.npy".format(str(i).zfill(3))
+        left_array = left_array.transpose((2, 0,1))
+        right_array = right_array.transpose((2, 0,1))
 
-        #np.save(str(left_path), left_array)
-        #np.save(str(right_path), right_array)
+        left_path = save_dir / "input_{}.npy".format(str(i).zfill(3))
+        right_path = save_dir / "target_{}.npy".format(str(i).zfill(3))
+
+        np.save(str(left_path), left_array)
+        np.save(str(right_path), right_array)
     
+        """
         left_path = save_dir / "input_{}.png".format(str(i).zfill(3))
         right_path = save_dir / "target_{}.png".format(str(i).zfill(3))
 
         cv2.imwrite(str(left_path), left_array)
         cv2.imwrite(str(right_path), right_array)
+        """
 
         print("{} done.".format(str(data)))
 

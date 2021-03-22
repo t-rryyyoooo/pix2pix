@@ -53,8 +53,6 @@ def main(args):
         #np.save(str(save_path_npy), translated_image)
         cv2.imwrite(str(save_path_jpg), translated_image)
         
-
 if __name__ == "__main__":
     args = parseArgs()
     main(args)
-
