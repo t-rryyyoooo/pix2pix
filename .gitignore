@@ -1,2 +1,8 @@
 test/
 lightning_logs/
+fail/
+*.mha
+*.nii.g
+__pycache__/
+input/
+secret.py
