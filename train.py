@@ -3,18 +3,16 @@ import sys
 import pytorch_lightning as pl
 sys.path.append("..")
 from model.pix2pix.system import Pix2PixSystem
-from model.pix2pix.callBacks import LatestModelCheckpoint, BestModelCheckpoint, SavePredImages
 
 def parseArgs():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("dataset_path")
-    parser.add_argument("model_savepath")
+    parser.add_argument("log_path")
     parser.add_argument("--train_list", help="00 01", nargs="*", default= "00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19")
     parser.add_argument("--val_list", help="20 21", nargs="*", default="20 21 22 23 24 25 26 27 28 29")
-    parser.add_argument("--check_dir", help="/home/vmlab/Desktop/data/log/Abdomen/28-44-44/mask", default="log")
+    parser.add_argument("--test_list", help="20 21", nargs="*", default="20 21 22 23 24 25 26 27 28 29")
     parser.add_argument("--num_columns", default=5)
-    parser.add_argument("--log", help="/home/vmlab/Desktop/data/log/Abdomen/28-44-44/mask", default="log")
     parser.add_argument("--lr", default=0.001, type=float)
     parser.add_argument("--batch_size", default=3, type=int)
     parser.add_argument("--num_workers", default=6, type=int)
@@ -35,22 +33,16 @@ def parseArgs():
     return args
 
 def main(args):
-    check_image_list = list(Path(args.check_dir).glob("input*"))
-
-    callbacks = [
-            LatestModelCheckpoint(args.model_savepath), 
-            BestModelCheckpoint(args.model_savepath),
-            SavePredImages(args.model_savepath, check_image_list, num_columns=args.num_columns)
-            ]
     criteria = {
             "train" : args.train_list,
-            "val"   : args.val_list
+            "val"   : args.val_list,
+            "test"  : args.test_list
             }
 
     system = Pix2PixSystem(
                 dataset_path = args.dataset_path,
                 criteria     = criteria,
-                callbacks    = callbacks,
+                log_path     = args.log_path,
                 lr           = args.lr,
                 batch_size   = args.batch_size,
                 num_workers  = args.num_workers,
@@ -69,7 +61,6 @@ def main(args):
                         api_key         = args.api_key,
                         project_name    = args.project_name,
                         experiment_name = args.experiment_name,
-                        save_dir        = args.log
                         )
 
         trainer = pl.Trainer(
