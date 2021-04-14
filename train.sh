@@ -1,14 +1,15 @@
 #!/bin/bash
 
-dataset_path="$HOME/Desktop/data/edges2shoes/pix2pix_test"
-model_savepath="test/data/modelweight"
-train_list="00"
-val_list="01"
-batch_size=4
-G_input_ch=3
-G_output_ch=3
-D_input_ch=6
-epoch=15
+dataset_path="$HOME/Desktop/data/patch/tsukubaData/kidney/fullSlice/all"
+log_path="test/log"
+train_list="011 012 013 014 015 016 017 018 019 020 021 022 023 024 025 026 027 028 029 030 031 032 033 034 035 036 037 038 039 040 041 042 043 044 045 046 047 048 049 050 051 052 053 054 055 056 057 058 059 060 061 062 063 064 065 066 067 068 069 070 071 072 073 074 075 076 077 078 079 080 081 082 083 084 085 086 087 088 089 090 091 092 093 094 095 096 097 098 099 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 184 185 186 187 188 189 191 192 193 195 196 197 198 199"
+val_list="test"
+test_list="test"
+batch_size=15
+G_input_ch=1
+G_output_ch=1
+D_input_ch=2
+epoch=30
 gpu_ids="0"
 
-python3 train.py ${dataset_path} ${model_savepath} --train_list ${train_list} --val_list ${val_list} --batch_size ${batch_size} --G_input_ch ${G_input_ch} --G_output_ch ${G_output_ch} --D_input_ch ${D_input_ch} --epoch ${epoch} --gpu_ids ${gpu_ids}
+python3 train.py ${dataset_path} ${log_path} --train_list ${train_list} --val_list ${val_list} --test_list ${test_list} --batch_size ${batch_size} --G_input_ch ${G_input_ch} --G_output_ch ${G_output_ch} --D_input_ch ${D_input_ch} --epoch ${epoch} --gpu_ids ${gpu_ids}

@@ -6,8 +6,9 @@ import sys
 sys.path.append("..")
 from utils.patchGenerator.slicePatchGenerator import SlicePatchGenerator
 from utils.patchGenerator.utils import calculatePaddingSize
-from utils.utils import isMasked
+from utils.utils import isMasked, getImageWithMeta
 from utils.imageProcessing.padding import paddingForNumpy
+from utils.imageProcessing.cropping import croppingForNumpy
 
 class ImageSlicer():
     def __init__(self, input_image, target_image, input_patch_size=None, target_patch_size=None, slide=None, axis=0, mask_image=None):
@@ -30,6 +31,7 @@ class ImageSlicer():
 
         self.input_image_array  = sitk.GetArrayFromImage(input_image)
         self.target_image_array = sitk.GetArrayFromImage(target_image)
+
 
         if mask_image is None:
             self.mask_image_array = np.ones_like(self.input_image_array)
@@ -58,6 +60,12 @@ class ImageSlicer():
 
 
         self.setGenerator()
+
+        """ This line is located after self.setGenerator() because input_image_array is padded in setGenerator. """
+        self.predicted_array = np.zeros_like(self.input_image_array)
+
+    def __len__(self):
+        return self.input_generator.__len__()
 
     def generatePatchArray(self):
         """ Generator which outputs input, target and mask patch array. """
@@ -173,5 +181,23 @@ class ImageSlicer():
         plane_size = np.array(image_size)[s]
 
         return plane_size
+
+    def insertToPredictedArray(self, index, predicted_array):
+        """ Insert predicted array (before argmax array) which has probability per class. """
+
+        self.predicted_array[index] = predicted_array
+
+    def outputRestoredImage(self):
+        self.predicted_array = croppingForNumpy(
+                                self.predicted_array,
+                                self.lower_pad_size[1].tolist(),
+                                self.upper_pad_size[1].tolist()
+                                )
+
+        predicted = getImageWithMeta(self.predicted_array, self.org_image)
+
+        return predicted
+                            
+                            
 
 
