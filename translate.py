@@ -22,6 +22,8 @@ def parseArgs():
     parser.add_argument("--input_patch_size", default="256-256")
     parser.add_argument("--target_patch_size", default="256-256")
     parser.add_argument("--axis", default=0, type=int)
+    parser.add_argument("--min_value", default=-300., type=float)
+    parser.add_argument("--max_value", default=300, type=float)
     parser.add_argument("--slide")
     parser.add_argument("--gpu_ids", type=int, nargs="*", default=[0])
     
@@ -80,7 +82,10 @@ def main(args):
             if isMasked(mask_patch_array):
                 image_patch_array, _ = transform("test", image_patch_array, dummy_patch_array)
 
-                translated_array = translater(image_patch_array)
+                translated_array = translater(image_patch_array).clip(min=0., max=1.)
+                translated_array = translated_array * (args.max_value - args.min_value) + args.min_value
+
+
 
                 image_slicer.insertToPredictedArray(index, translated_array)
 

@@ -3,6 +3,7 @@ import sys
 import pytorch_lightning as pl
 sys.path.append("..")
 from model.pix2pix.system import Pix2PixSystem
+from utils.utils import setSeed
 
 def parseArgs():
     parser = argparse.ArgumentParser()
@@ -33,6 +34,8 @@ def parseArgs():
     return args
 
 def main(args):
+    setSeed()
+    print(args)
     criteria = {
             "train" : args.train_list,
             "val"   : args.val_list,

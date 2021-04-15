@@ -17,9 +17,6 @@ printVarInfo(){
  echo "$1 : ${!1:-(null)}"
 }
 
-a="ii ii 22 22s"
-printVarInfo a
-
 readonly INPUT_DIRECTORY="input"
 JSON_NAME=${0//.sh/.json}
 
@@ -76,46 +73,46 @@ readonly TARGET_PATCH_SIZE=$(cat ${JSON_FILE} | jq -r ".target_patch_size")
 readonly AXIS=$(cat ${JSON_FILE} | jq -r ".axis")
 readonly SLIDE=$(cat ${JSON_FILE} | jq -r ".slide")
 
-echo "---------- Training ----------"
-printVarInfo DATASET_PATH
-printVarInfo LOG_PATH
-printVarInfo TRAIN_LIST
-printVarInfo VAL_LIST
-printVarInfo TEST_LIST
-printVarInfo NUM_COLUMNS
-printVarInfo LR
-printVarInfo BATCH_SIZE
-printVarInfo NUM_WORKERS
-printVarInfo G_INPUT_CH
-printVarInfo G_OUTPUT_CH
-printVarInfo G_NAME
-printVarInfo D_INPUT_CH
-printVarInfo D_NAME
-printVarInfo NGF
-printVarInfo EPOCH
-printVarInfo GPU_IDS
-printVarInfo API_KEY
-printVarInfo PROJECT_NAME
-printVarInfo EXPERIMENT_NAME
-
 api_keys=`generateArgument $API_KEY`
 project_name=`generateArgument $PROJECT_NAME`
 experiment_name=`generateArgument $EXPERIMENT_NAME`
 if $RUN_TRAINING; then
- echo
- #python3 train.py ${DATASET_PATH} ${LOG_PATH} --train_list ${TRAIN_LIST} --val_list ${VAL_LIST} --test_list ${TEST_LIST} --num_columns ${NUM_COLUMNS} --lr ${LR} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --G_input_ch ${G_INPUT_CH} --G_output_ch ${G_OUTPUT_CH} --G_name ${G_NAME} --D_input_ch ${D_INPUT_CH} --D_name ${D_NAME} --ngf ${NGF} --epoch ${EPOCH} --gpu_ids ${GPU_IDS} ${api_keys} ${project_name} ${experiment_name}
+ echo "---------- Training ----------"
+ printVarInfo DATASET_PATH
+ printVarInfo LOG_PATH
+ printVarInfo TRAIN_LIST
+ printVarInfo VAL_LIST
+ printVarInfo TEST_LIST
+ printVarInfo NUM_COLUMNS
+ printVarInfo LR
+ printVarInfo BATCH_SIZE
+ printVarInfo NUM_WORKERS
+ printVarInfo G_INPUT_CH
+ printVarInfo G_OUTPUT_CH
+ printVarInfo G_NAME
+ printVarInfo D_INPUT_CH
+ printVarInfo D_NAME
+ printVarInfo NGF
+ printVarInfo EPOCH
+ printVarInfo GPU_IDS
+ printVarInfo API_KEY
+ printVarInfo PROJECT_NAME
+ printVarInfo EXPERIMENT_NAME
 
+ python3 train.py ${DATASET_PATH} ${LOG_PATH} --train_list ${TRAIN_LIST} --val_list ${VAL_LIST} --test_list ${TEST_LIST} --num_columns ${NUM_COLUMNS} --lr ${LR} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --G_input_ch ${G_INPUT_CH} --G_output_ch ${G_OUTPUT_CH} --G_name ${G_NAME} --D_input_ch ${D_INPUT_CH} --D_name ${D_NAME} --ngf ${NGF} --epoch ${EPOCH} --gpu_ids ${GPU_IDS} ${api_keys} ${project_name} ${experiment_name}
+
+else
+  echo "---------- No training ----------"
 fi
 
-echo "---------- Translating ----------"
 if $RUN_TRANSLATING; then
- printVarInfo TRANSLATE_LIST
+ echo "---------- Translating ----------"
  model_path="${LOG_PATH}/${MODEL_NAME}"
  for number in ${TRANSLATE_LIST[@]};
  do
   data="${DATA_DIRECTORY}/case_${number}"
   image_path="${data}/${INPUT_NAME}"
-  save_path="${data}/${TRANSLATE_NAME}"
+  save_path="${DATASET_PATH}/case_${number}/${TRANSLATE_NAME}"
 
   mask=`generateArgument $MASK_NAME --mask_image_path "${data}/${MASK_NAME}"`
   slide=`generateArgument $SLIDE --slide`
@@ -130,9 +127,11 @@ if $RUN_TRANSLATING; then
   printVarInfo SLIDE
   printVarInfo 
 
-  #python3 translate.py ${image_path} ${model_path} ${save_path} --input_patch_size ${INPUT_PATCH_SIZE} --target_patch_size ${TARGET_PATCH_SIZE} --axis ${AXIS} --gpu_ids ${GPU_IDS} ${mask} ${slide}
+  python3 translate.py ${image_path} ${model_path} ${save_path} --input_patch_size ${INPUT_PATCH_SIZE} --target_patch_size ${TARGET_PATCH_SIZE} --axis ${AXIS} --gpu_ids ${GPU_IDS} ${mask} ${slide}
 
  done
+else
+  echo "---------- No translating ----------"
 fi
 
 
