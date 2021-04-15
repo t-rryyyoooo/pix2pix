@@ -4,6 +4,7 @@ import pytorch_lightning as pl
 sys.path.append("..")
 from model.pix2pix.system import Pix2PixSystem
 from utils.utils import setSeed
+from pytorch_lightning.loggers import TensorBoardLogger
 
 def parseArgs():
     parser = argparse.ArgumentParser()
@@ -25,9 +26,6 @@ def parseArgs():
     parser.add_argument("--ngf", default=64, type=int, help="Refer the discriminator.py or generator.py and so on.")
     parser.add_argument("--epoch", default=100, type=int)
     parser.add_argument("--gpu_ids", default=[0], type=int, nargs="*")
-    parser.add_argument("--api_key", help="Your comet.ml API key.")
-    parser.add_argument("--project_name", help="Project name log is saved.")
-    parser.add_argument("--experiment_name", help="Experiment name.", default="3DU-Net")
 
     args = parser.parse_args()
 
@@ -35,7 +33,6 @@ def parseArgs():
 
 def main(args):
     setSeed()
-    print(args)
     criteria = {
             "train" : args.train_list,
             "val"   : args.val_list,
@@ -58,31 +55,16 @@ def main(args):
                 gpu_ids      = args.gpu_ids
                 )
 
-    if args.api_key is not None:
-        from pytorch_lightning.loggers import CometLogger
-        comet_logger = CometLogger(
-                        api_key         = args.api_key,
-                        project_name    = args.project_name,
-                        experiment_name = args.experiment_name,
-                        )
-
-        trainer = pl.Trainer(
-                    num_sanity_val_steps = 0,
-                    max_epochs           = args.epoch,
-                    checkpoint_callback  = None,
-                    #logger               = comet_logger,
-                    gpus                 = args.gpu_ids,
-                    #reload_dataloaders_every_epoch = True
-                    )
-
-    else:
-        trainer = pl.Trainer(
-                    num_sanity_val_steps = 0,
-                    max_epochs           = args.epoch,
-                    checkpoint_callback  = None,
-                    gpus                 = args.gpu_ids,
-                    #reload_dataloaders_every_epoch = True
-                    )
+    logger = TensorBoardLogger(args.log_path)
+            
+    trainer = pl.Trainer(
+                num_sanity_val_steps = 0,
+                max_epochs           = args.epoch,
+                checkpoint_callback  = None,
+                logger               = logger,
+                gpus                 = args.gpu_ids,
+                #reload_dataloaders_every_epoch = True
+                )
 
     trainer.fit(system)
 
