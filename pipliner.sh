@@ -57,9 +57,6 @@ readonly D_NAME=$(cat ${JSON_FILE} | jq -r ".d_name")
 readonly NGF=$(cat ${JSON_FILE} | jq -r ".ngf")
 readonly EPOCH=$(cat ${JSON_FILE} | jq -r ".epoch")
 readonly GPU_IDS=$(cat ${JSON_FILE} | jq -r ".gpu_ids")
-readonly API_KEY=$(cat ${JSON_FILE} | jq -r ".api_key")
-readonly PROJECT_NAME=$(cat ${JSON_FILE} | jq -r ".project_name")
-readonly EXPERIMENT_NAME=$(cat ${JSON_FILE} | jq -r ".experiment_name")
 
 # Translating input
 readonly DATA_DIRECTORY=$(eval echo $(cat ${JSON_FILE} | jq -r ".data_directory"))
@@ -73,9 +70,6 @@ readonly TARGET_PATCH_SIZE=$(cat ${JSON_FILE} | jq -r ".target_patch_size")
 readonly AXIS=$(cat ${JSON_FILE} | jq -r ".axis")
 readonly SLIDE=$(cat ${JSON_FILE} | jq -r ".slide")
 
-api_keys=`generateArgument $API_KEY`
-project_name=`generateArgument $PROJECT_NAME`
-experiment_name=`generateArgument $EXPERIMENT_NAME`
 if $RUN_TRAINING; then
  echo "---------- Training ----------"
  printVarInfo DATASET_PATH
@@ -95,11 +89,8 @@ if $RUN_TRAINING; then
  printVarInfo NGF
  printVarInfo EPOCH
  printVarInfo GPU_IDS
- printVarInfo API_KEY
- printVarInfo PROJECT_NAME
- printVarInfo EXPERIMENT_NAME
 
- python3 train.py ${DATASET_PATH} ${LOG_PATH} --train_list ${TRAIN_LIST} --val_list ${VAL_LIST} --test_list ${TEST_LIST} --num_columns ${NUM_COLUMNS} --lr ${LR} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --G_input_ch ${G_INPUT_CH} --G_output_ch ${G_OUTPUT_CH} --G_name ${G_NAME} --D_input_ch ${D_INPUT_CH} --D_name ${D_NAME} --ngf ${NGF} --epoch ${EPOCH} --gpu_ids ${GPU_IDS} ${api_keys} ${project_name} ${experiment_name}
+ python3 train.py ${DATASET_PATH} ${LOG_PATH} --train_list ${TRAIN_LIST} --val_list ${VAL_LIST} --test_list ${TEST_LIST} --num_columns ${NUM_COLUMNS} --lr ${LR} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --G_input_ch ${G_INPUT_CH} --G_output_ch ${G_OUTPUT_CH} --G_name ${G_NAME} --D_input_ch ${D_INPUT_CH} --D_name ${D_NAME} --ngf ${NGF} --epoch ${EPOCH} --gpu_ids ${GPU_IDS} 
 
 else
   echo "---------- No training ----------"
