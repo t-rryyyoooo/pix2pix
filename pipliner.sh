@@ -47,6 +47,7 @@ readonly VAL_LIST=$(cat ${JSON_FILE} | jq -r ".val_list")
 readonly TEST_LIST=$(cat ${JSON_FILE} | jq -r ".test_list")
 readonly NUM_COLUMNS=$(cat ${JSON_FILE} | jq -r ".num_columns")
 readonly LR=$(cat ${JSON_FILE} | jq -r ".lr")
+readonly L1_LAMBDA=$(cat ${JSON_FILE} | jq -r ".l1_lambda")
 readonly BATCH_SIZE=$(cat ${JSON_FILE} | jq -r ".batch_size")
 readonly NUM_WORKERS=$(cat ${JSON_FILE} | jq -r ".num_workers")
 readonly G_INPUT_CH=$(cat ${JSON_FILE} | jq -r ".g_input_ch")
@@ -79,6 +80,7 @@ if $RUN_TRAINING; then
  printVarInfo TEST_LIST
  printVarInfo NUM_COLUMNS
  printVarInfo LR
+ printVarInfo L1_LAMBDA
  printVarInfo BATCH_SIZE
  printVarInfo NUM_WORKERS
  printVarInfo G_INPUT_CH

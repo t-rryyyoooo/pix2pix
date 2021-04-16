@@ -16,6 +16,7 @@ def parseArgs():
     parser.add_argument("--test_list", help="20 21", nargs="*", default="20 21 22 23 24 25 26 27 28 29")
     parser.add_argument("--num_columns", default=5)
     parser.add_argument("--lr", default=0.001, type=float)
+    parser.add_argument("--l1_lambda", default=100., type=float)
     parser.add_argument("--batch_size", default=3, type=int)
     parser.add_argument("--num_workers", default=6, type=int)
     parser.add_argument("--G_input_ch", default=1, type=int)
@@ -44,6 +45,7 @@ def main(args):
                 criteria     = criteria,
                 log_path     = args.log_path,
                 lr           = args.lr,
+                l1_lambda    = args.l1_lambda,
                 batch_size   = args.batch_size,
                 num_workers  = args.num_workers,
                 G_input_ch   = args.G_input_ch,
