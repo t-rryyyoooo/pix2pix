@@ -3,7 +3,7 @@ import SimpleITK as sitk
 import numpy as np
 import sys
 sys.path.append("..")
-from utils.utils import getSizeFromString
+from utils.utils import sitkReadImageElseNone, getSizeFromStringElseNone
 from imageSlicer import ImageSlicer
 
 def parseArgs():
@@ -16,6 +16,7 @@ def parseArgs():
     parser.add_argument("--mask_image_path", help="case_00/mask.nii.gz")
     parser.add_argument("--input_patch_size", help="256-256, default: None (means full slice)")
     parser.add_argument("--target_patch_size", help="256-256, default: None (means full slice)")
+    parser.add_argument("--plane_size", help="256-256, default: None (means full slice)")
     parser.add_argument("--slide", help="256-256")
     parser.add_argument("--axis", type=int, help="Image arrayis sliced perpendicular to it. [ex] 0", default=0)
     parser.add_argument("--input_name", help="Saved input patch name.", default="input")
@@ -29,31 +30,19 @@ def parseArgs():
 def main(args):
     input_image  = sitk.ReadImage(args.input_image_path)
     target_image = sitk.ReadImage(args.target_image_path)
+    mask_image   = sitkReadImageElseNone(args.mask_image_path)
 
-    if args.mask_image_path is None:
-        mask_image = None
-    else:
-        mask_image = sitk.ReadImage(args.mask_image_path)
-
-    if args.input_patch_size is None:
-        input_patch_size = None
-    else:
-        input_patch_size = getSizeFromString(args.input_patch_size, digit=2)
-    if args.target_patch_size is None:
-        target_patch_size = None
-    else:
-        target_patch_size = getSizeFromString(args.target_patch_size, digit=2)
-
-    if args.slide is None:
-        slide = None
-    else:
-        slide = getSizeFromString(args.slide, digit=2)
+    input_patch_size  = getSizeFromStringElseNone(args.input_patch_size, digit=2)
+    target_patch_size = getSizeFromStringElseNone(args.target_patch_size, digit=2)
+    plane_size        = getSizeFromStringElseNone(args.plane_size, digit=2)
+    slide             = getSizeFromStringElseNone(args.slide, digit=2)
 
     image_slicer = ImageSlicer(
                     input_image,
                     target_image,
                     input_patch_size  = input_patch_size,
                     target_patch_size = target_patch_size,
+                    plane_size        = plane_size,
                     slide             = slide,
                     axis              = args.axis,
                     mask_image        = mask_image
@@ -70,4 +59,3 @@ def main(args):
 if __name__ == "__main__":
     args = parseArgs()
     main(args)
-
