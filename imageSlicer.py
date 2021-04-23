@@ -87,12 +87,14 @@ class ImageSlicer():
         self.input_image_array  = paddingForNumpy(
                                     self.input_image_array,
                                     self.lower_pad_size[0].tolist(),
-                                    self.upper_pad_size[0].tolist()
+                                    self.upper_pad_size[0].tolist(),
+                                    mirroring = True
                                     )
         self.target_image_array = paddingForNumpy(
                                     self.target_image_array,
                                     self.lower_pad_size[1].tolist(),
-                                    self.upper_pad_size[1].tolist()
+                                    self.upper_pad_size[1].tolist(),
+                                    mirroring=True
                                     )
         self.mask_image_array   = paddingForNumpy(
                                     self.mask_image_array,
