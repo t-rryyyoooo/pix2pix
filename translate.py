@@ -19,8 +19,8 @@ def parseArgs():
     parser.add_argument("model_path", help="$HOME/latest.pkl")
     parser.add_argument("save_path", help="$HOME/case_00/translate.mha")
     parser.add_argument("--mask_path") 
-    parser.add_argument("--input_patch_size", default="256-256")
-    parser.add_argument("--target_patch_size", default="256-256")
+    parser.add_argument("--input_patch_size")
+    parser.add_argument("--target_patch_size")
     parser.add_argument("--axis", default=0, type=int)
     parser.add_argument("--min_value", default=-300., type=float)
     parser.add_argument("--max_value", default=300, type=float)
@@ -43,8 +43,14 @@ def main(args):
     else:
         mask = None
 
-    input_patch_size  = getSizeFromString(args.input_patch_size, digit=2)
-    target_patch_size = getSizeFromString(args.target_patch_size, digit=2)
+    if args.input_patch_size is None:
+        input_patch_size = None
+    else:
+        input_patch_size  = getSizeFromString(args.input_patch_size, digit=2)
+    if args.target_patch_size is None:
+        target_patch_size = None
+    else:
+        target_patch_size = getSizeFromString(args.target_patch_size, digit=2)
 
     if args.slide is not None:
         slide = getSizeFromString(args.slide, digit=2)

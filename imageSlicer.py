@@ -62,7 +62,7 @@ class ImageSlicer():
         self.setGenerator()
 
         """ This line is located after self.setGenerator() because input_image_array is padded in setGenerator. """
-        self.predicted_array = np.zeros_like(self.input_image_array)
+        self.predicted_array = np.zeros_like(self.input_image_array, dtype=np.float)
 
     def __len__(self):
         return self.input_generator.__len__()
@@ -187,7 +187,7 @@ class ImageSlicer():
     def insertToPredictedArray(self, index, predicted_array):
         """ Insert predicted array (before argmax array) which has probability per class. """
 
-        self.predicted_array[index] = predicted_array
+        self.predicted_array[index] += predicted_array
 
     def outputRestoredImage(self):
         self.predicted_array = croppingForNumpy(

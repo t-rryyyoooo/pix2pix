@@ -105,10 +105,12 @@ if $RUN_TRANSLATING; then
  do
   data="${DATA_DIRECTORY}/case_${number}"
   image_path="${data}/${INPUT_NAME}"
-  save_path="${DATASET_PATH}/case_${number}/${TRANSLATE_NAME}"
+  save_path="${DATASET_PATH}/segmentation/case_${number}/${TRANSLATE_NAME}"
 
   mask=`generateArgument $MASK_NAME --mask_image_path "${data}/${MASK_NAME}"`
   slide=`generateArgument $SLIDE --slide`
+  input_patch_size=`generateArgument $INPUT_PATCH_SIZE --input_patch_size`
+  target_patch_size=`generateArgument $TARGET_PATCH_SIZE --target_patch_size`
 
   printVarInfo image_path
   printVarInfo model_path
@@ -120,7 +122,7 @@ if $RUN_TRANSLATING; then
   printVarInfo SLIDE
   printVarInfo 
 
-  python3 translate.py ${image_path} ${model_path} ${save_path} --input_patch_size ${INPUT_PATCH_SIZE} --target_patch_size ${TARGET_PATCH_SIZE} --axis ${AXIS} --gpu_ids ${GPU_IDS} ${mask} ${slide}
+  python3 translate.py ${image_path} ${model_path} ${save_path} --axis ${AXIS} --gpu_ids ${GPU_IDS} ${mask} ${slide} ${input_patch_size} ${target_patch_size}
 
  done
 else
