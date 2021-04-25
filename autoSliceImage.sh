@@ -24,6 +24,7 @@ readonly DATA_DIRECTORY=$(eval echo $(cat ${JSON_FILE} | jq -r ".data_directory"
 readonly SAVE_DIRECTORY=$(eval echo $(cat ${JSON_FILE} | jq -r ".save_directory"))
 readonly INPUT_PATCH_SIZE=$(cat ${JSON_FILE} | jq -r ".input_patch_size")
 readonly TARGET_PATCH_SIZE=$(cat ${JSON_FILE} | jq -r ".target_patch_size")
+readonly PLANE_SIZE=$(cat ${JSON_FILE} | jq -r ".plane_size")
 readonly INPUT_NAME=$(cat ${JSON_FILE} | jq -r ".input_name")
 readonly TARGET_NAME=$(cat ${JSON_FILE} | jq -r ".target_name")
 readonly MASK_NAME=$(cat ${JSON_FILE} | jq -r ".mask_name")
@@ -73,12 +74,14 @@ do
  mask=`generateArgument $MASK_NAME --mask_image_path "${data}/${MASK_NAME}"`
  input_patch_size=`generateArgument $INPUT_PATCH_SIZE --input_patch_size`
  target_patch_size=`generateArgument $TARGET_PATCH_SIZE --target_patch_size`
+ plane_size=`generateArgument $PLANE_SIZE --plane_size`
  slide=`generateArgument $SLIDE --slide`
 
  echo "mask:${mask}"
- echo "input_patch_size:${input_patch_size}"
- echo "target_patch_size:${target_patch_size}"
- echo "slide:${slide}"
+ echo "INPUT_PATCH_SIZE:${INPUT_PATCH_SIZE}"
+ echo "TARGET_PATCH_SIZE:${TARGET_PATCH_SIZE}"
+ echo "PLANE_SIZE:${PLANE_SIZE}"
+ echo "SLIDE:${SLIDE}"
 
  if [ $MASK_NAME = "No" ];then
   if $WITH_NONMASK ;then
@@ -90,7 +93,7 @@ do
   fi
  fi
 
- python3 sliceImage.py ${input} ${target} ${SAVE_DIRECTORY} ${number} ${mask} ${input_patch_size} ${target_patch_size} ${slide} --axis ${AXIS} --input_name ${SAVE_INPUT_NAME} --target_name ${SAVE_TARGET_NAME} ${with_nonmask}
+ python3 sliceImage.py ${input} ${target} ${SAVE_DIRECTORY} ${number} ${mask} ${input_patch_size} ${target_patch_size} ${slide} --axis ${AXIS} --input_name ${SAVE_INPUT_NAME} --target_name ${SAVE_TARGET_NAME} ${with_nonmask} ${plane_size}
 
 
  # Judge if it works.
