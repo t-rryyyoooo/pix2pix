@@ -4,7 +4,7 @@ import numpy as np
 import sys
 sys.path.append("..")
 from utils.utils import sitkReadImageElseNone, getSizeFromStringElseNone
-from imageSlicer import ImageSlicer
+from patch2DCreater import Patch2DCreater
 
 def parseArgs():
     parser = argparse.ArgumentParser()
@@ -16,7 +16,6 @@ def parseArgs():
     parser.add_argument("--mask_image_path", help="case_00/mask.nii.gz")
     parser.add_argument("--input_patch_size", help="256-256, default: None (means full slice)")
     parser.add_argument("--target_patch_size", help="256-256, default: None (means full slice)")
-    parser.add_argument("--plane_size", help="256-256, default: None (means full slice)")
     parser.add_argument("--slide", help="256-256")
     parser.add_argument("--axis", type=int, help="Image arrayis sliced perpendicular to it. [ex] 0", default=0)
     parser.add_argument("--input_name", help="Saved input patch name.", default="input")
@@ -34,15 +33,13 @@ def main(args):
 
     input_patch_size  = getSizeFromStringElseNone(args.input_patch_size, digit=2)
     target_patch_size = getSizeFromStringElseNone(args.target_patch_size, digit=2)
-    plane_size        = getSizeFromStringElseNone(args.plane_size, digit=2)
     slide             = getSizeFromStringElseNone(args.slide, digit=2)
 
-    image_slicer = ImageSlicer(
+    image_slicer = Patch2DCreater(
                     input_image,
                     target_image,
                     input_patch_size  = input_patch_size,
                     target_patch_size = target_patch_size,
-                    plane_size        = plane_size,
                     slide             = slide,
                     axis              = args.axis,
                     mask_image        = mask_image
