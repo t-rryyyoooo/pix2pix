@@ -1,9 +1,8 @@
 {
     "data_directory" : "$HOME/Desktop/data/tsukubaData/allData",
-    "save_directory" : "$HOME/Desktop/data/patch/tsukubaData/allData/fullSlice/512-512",
+    "save_directory" : "$HOME/Desktop/data/patch/tsukubaData/allData/fullSlice",
     "input_patch_size" : "No",
     "target_patch_size" : "No",
-    "plane_size" : "512-512",
     "input_name" : "SE3_resampled.nii.gz",
     "target_name" : "SE2_resampled.nii.gz",
     "mask_name" : "No",

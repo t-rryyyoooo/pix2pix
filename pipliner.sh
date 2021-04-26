@@ -55,6 +55,7 @@ readonly G_OUTPUT_CH=$(cat ${JSON_FILE} | jq -r ".g_output_ch")
 readonly G_NAME=$(cat ${JSON_FILE} | jq -r ".g_name")
 readonly D_INPUT_CH=$(cat ${JSON_FILE} | jq -r ".d_input_ch")
 readonly D_NAME=$(cat ${JSON_FILE} | jq -r ".d_name")
+readonly D_N_LAYERS=$(cat ${JSON_FILE} | jq -r ".d_n_layers")
 readonly NGF=$(cat ${JSON_FILE} | jq -r ".ngf")
 readonly EPOCH=$(cat ${JSON_FILE} | jq -r ".epoch")
 readonly GPU_IDS=$(cat ${JSON_FILE} | jq -r ".gpu_ids")
@@ -88,11 +89,12 @@ if $RUN_TRAINING; then
  printVarInfo G_NAME
  printVarInfo D_INPUT_CH
  printVarInfo D_NAME
+ printVarInfo D_N_LAYERS
  printVarInfo NGF
  printVarInfo EPOCH
  printVarInfo GPU_IDS
 
- python3 train.py ${DATASET_PATH} ${LOG_PATH} --train_list ${TRAIN_LIST} --val_list ${VAL_LIST} --test_list ${TEST_LIST} --num_columns ${NUM_COLUMNS} --lr ${LR} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --G_input_ch ${G_INPUT_CH} --G_output_ch ${G_OUTPUT_CH} --G_name ${G_NAME} --D_input_ch ${D_INPUT_CH} --D_name ${D_NAME} --ngf ${NGF} --epoch ${EPOCH} --gpu_ids ${GPU_IDS} 
+ python3 train.py ${DATASET_PATH} ${LOG_PATH} --train_list ${TRAIN_LIST} --val_list ${VAL_LIST} --test_list ${TEST_LIST} --num_columns ${NUM_COLUMNS} --lr ${LR} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --G_input_ch ${G_INPUT_CH} --G_output_ch ${G_OUTPUT_CH} --G_name ${G_NAME} --D_input_ch ${D_INPUT_CH} --D_name ${D_NAME} --ngf ${NGF} --epoch ${EPOCH} --gpu_ids ${GPU_IDS} --D_n_layers ${D_N_LAYERS}
 
 else
   echo "---------- No training ----------"

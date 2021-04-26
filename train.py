@@ -24,6 +24,7 @@ def parseArgs():
     parser.add_argument("--G_name", default="unet_256")
     parser.add_argument("--D_input_ch", default=2, type=int)
     parser.add_argument("--D_name", default="PatchGAN")
+    parser.add_argument("--D_n_layers", default=3, type=int)
     parser.add_argument("--ngf", default=64, type=int, help="Refer the discriminator.py or generator.py and so on.")
     parser.add_argument("--epoch", default=100, type=int)
     parser.add_argument("--gpu_ids", default=[0], type=int, nargs="*")
@@ -53,6 +54,7 @@ def main(args):
                 G_name       = args.G_name,
                 D_input_ch   = args.D_input_ch,
                 D_name       = args.D_name,
+                D_n_layers   = args.D_n_layers,
                 ngf          = args.ngf,
                 gpu_ids      = args.gpu_ids
                 )
