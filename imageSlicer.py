@@ -142,4 +142,49 @@ def ImageSlicer():
 
             yield ipa[1], tpa[1], mpa[1], slices
 
+    def savePatchArray(self, save_dir, patient_id, input_name="input", target_name="target", with_nonmask=False):
+        """ Save patch array to save_path.
+        save_path : save_dir / 'all' or 'mask' or 'nonmask' / case_{patient_id} / 'input_name_0000.npy' or 'target_name_0000.npy'
+
+        Parameters: 
+            save_dir (str)      -- Refer above.
+            patient_id (str)    -- Refer above.
+            input_name (str)    -- Input patch array name. Refer above.
+            target_name (str)   -- Target patch array name. Refer above.
+            with_nonmask (bool) -- Whether you save nonmasked images when mask image is fed.
+        """
+        save_dir = Path(save_dir)
+
+        if self.mask_image is None:
+            save_mask_path = save_dir / "all" / "case_{}".format(str(patient_id).zfill(2)) # When mask_image is None, all of patch arrays are masked.
+
+        else:
+            save_mask_path    = save_dir / "mask"    / "case_{}".format(str(patient_id).zfill(2)) 
+            save_nonmask_path = save_dir / "nonmask" / "case_{}".format(str(patient_id).zfill(2)) 
+
+        save_mask_path.mkdir(parents=True, exist_ok=True)
+        if with_nonmask:
+            save_nonmask_path.mkdir(parents=True, exist_ok=True)
+
+        with tqdm(total=self.input_generator.__len__(), desc="Savig patch array...", ncols=60) as pbar:
+            for i, (ipa, tpa, mpa, _) in enumerate(self.generatePatchArray()):
+                if isMasked(mpa):
+                    input_masked_save_path  = save_mask_path / "input_{:04d}.npy".format(i)
+                    target_masked_save_path = save_mask_path / "target_{:04d}.npy".format(i)
+
+                    np.save(str(input_masked_save_path),  ipa)
+                    np.save(str(target_masked_save_path), tpa)
+
+                else:
+                    if with_nonmask:
+                        input_nonmasked_save_path  = save_nonmasked_path / "input_{:04d}.npy".format(i)
+                        target_nonmasked_save_path = save_nonmasked_path / "target_{:04d}.npy".format(i)
+
+                        np.save(str(input_nonmasked_save_path),  ipa)
+                        np.save(str(target_nonmasked_sace_path), tpa)
+
+                pbar.update(1)
+
+t
+
 
