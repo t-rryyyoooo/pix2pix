@@ -1,0 +1,17 @@
+{
+    "data_directory" : "/Users/tanimotoryou/Documents/lab/imageData/Abdomen",
+    "save_directory" : "/Users/tanimotoryou/Desktop/testss",
+    "input_patch_width" : 3,
+    "target_patch_width" : 1,
+    "plane_size" : "512-512",
+    "input_name" : "imaging_resampled.nii.gz",
+    "target_name" : "imaging_resampled.nii.gz",
+    "mask_name" : "No",
+    "save_input_name" : "input",
+    "save_target_name" : "target",
+    "overlap" : 1,
+    "axis" : 0,
+    "with_nonmask" : false,
+    "num_array" : ["00", "01"],
+    "log_file" : "fail/sliceImage.txt"
+}

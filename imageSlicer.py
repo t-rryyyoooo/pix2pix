@@ -1,12 +1,16 @@
 import numpy as np
 import SimpleITK as sitk
 import sys
+from pathlib import Path
+from tqdm import tqdm
 sys.path.append("..")
-from utils.imagProcessing.cropping import croppingForNumpy
-from utils.imagProcessing.padding import paddingForNumpy
+from utils.imageProcessing.cropping import croppingForNumpy
+from utils.imageProcessing.padding import paddingForNumpy
 from utils.patchGenerator.slicePatchGenerator import SlicePatchGenerator
+from utils.patchGenerator.utils import calculatePaddingSize
+from utils.utils import isMasked
 
-def ImageSlicer():
+class ImageSlicer():
     def __init__(self, image=None, target=None, image_patch_width=1, target_patch_width=1, plane_size=None, overlap=1, axis=0, mask=None):
         """ Pad or crop images to plane size and slice them perpendicular to axis.
 
@@ -34,8 +38,9 @@ def ImageSlicer():
             self.plane_size = plane_size
 
         self.slide = target_patch_width // overlap
-        self.axsi  = axis
+        self.axis  = axis
 
+        self.mask = mask
         if mask is None:
             self.mask_array = np.ones_like(self.image_array)
         else:
@@ -44,12 +49,14 @@ def ImageSlicer():
         self.setGenerator()
 
     def setGenerator(self):
-        self.image_array  = self.adjustArraySizeInPlane(self.image_array, self.plane_size, self.axis)
-        self.target_array = self.adjustArraySize(self., self.plane_size, self.axis)
-        self.mask_array   = self.adjustArraySize(self.mask_array, self.plane_size, self.axis)
+        self.image_array, _  = self.adjustArraySizeInPlane(self.image_array, self.plane_size, self.axis)
+        self.target_array, _ = self.adjustArraySizeInPlane(self.target_array, self.plane_size, self.axis)
+        self.mask_array, _   = self.adjustArraySizeInPlane(self.mask_array, self.plane_size, self.axis)
 
+        print(self.image_array.shape)
+        print(self.target_array.shape)
         self.lower_pad_size, self.upper_pad_size = calculatePaddingSize(
-                                                    self.input_image_array.shape,
+                                                    self.image_array.shape,
                                                     np.insert(self.plane_size, self.axis, self.image_patch_width),
                                                     np.insert(self.plane_size, self.axis, self.target_patch_width),
                                                     np.insert(self.plane_size, self.axis, self.slide)
@@ -71,6 +78,8 @@ def ImageSlicer():
                                 self.lower_pad_size[1].tolist(),
                                 self.upper_pad_size[1].tolist()
                                 )
+        print(self.image_array.shape)
+        print(self.target_array.shape)
 
         self.image_generator  = SlicePatchGenerator(
                                     image_array = self.image_array,
@@ -105,7 +114,6 @@ def ImageSlicer():
         """
         image_size     = np.array(image_array.shape)
         required_shape = np.insert(plane_size, axis, image_size[axis])
-        print(required_shape)
         
         diff = required_shape - image_size
         lower_size = (abs(diff) // 2).tolist()
@@ -137,7 +145,7 @@ def ImageSlicer():
 
     def generatePatchArray(self):
         "Generator which outputs input, target and mask patch array. """
-        for ipa, tpa, mpa in zip(self.input_generator(), self.target_generator(), self.mask_generator()):
+        for ipa, tpa, mpa in zip(self.image_generator(), self.target_generator(), self.mask_generator()):
             slices = tpa[0]
 
             yield ipa[1], tpa[1], mpa[1], slices
@@ -155,7 +163,7 @@ def ImageSlicer():
         """
         save_dir = Path(save_dir)
 
-        if self.mask_image is None:
+        if self.mask is None:
             save_mask_path = save_dir / "all" / "case_{}".format(str(patient_id).zfill(2)) # When mask_image is None, all of patch arrays are masked.
 
         else:
@@ -166,7 +174,7 @@ def ImageSlicer():
         if with_nonmask:
             save_nonmask_path.mkdir(parents=True, exist_ok=True)
 
-        with tqdm(total=self.input_generator.__len__(), desc="Savig patch array...", ncols=60) as pbar:
+        with tqdm(total=self.image_generator.__len__(), desc="Savig patch array...", ncols=60) as pbar:
             for i, (ipa, tpa, mpa, _) in enumerate(self.generatePatchArray()):
                 if isMasked(mpa):
                     input_masked_save_path  = save_mask_path / "input_{:04d}.npy".format(i)
@@ -184,7 +192,3 @@ def ImageSlicer():
                         np.save(str(target_nonmasked_sace_path), tpa)
 
                 pbar.update(1)
-
-t
-
-
