@@ -8,7 +8,7 @@ from utils.imageProcessing.cropping import croppingForNumpy
 from utils.imageProcessing.padding import paddingForNumpy
 from utils.patchGenerator.slicePatchGenerator import SlicePatchGenerator
 from utils.patchGenerator.utils import calculatePaddingSize
-from utils.utils import isMasked
+from utils.utils import isMasked, getImageWithMeta
 
 class ImageSlicer():
     def __init__(self, image=None, target=None, image_patch_width=1, target_patch_width=1, plane_size=None, overlap=1, axis=0, mask=None):
@@ -48,13 +48,16 @@ class ImageSlicer():
 
         self.setGenerator()
 
+        self.predicted_array = np.zeros_like(self.image_array, dtype=np.float)
+
+    def __len__(self):
+        return self.target_array.shape[self.axis] 
+
     def setGenerator(self):
         self.image_array, _  = self.adjustArraySizeInPlane(self.image_array, self.plane_size, self.axis)
         self.target_array, _ = self.adjustArraySizeInPlane(self.target_array, self.plane_size, self.axis)
         self.mask_array, _   = self.adjustArraySizeInPlane(self.mask_array, self.plane_size, self.axis)
 
-        print(self.image_array.shape)
-        print(self.target_array.shape)
         self.lower_pad_size, self.upper_pad_size = calculatePaddingSize(
                                                     self.image_array.shape,
                                                     np.insert(self.plane_size, self.axis, self.image_patch_width),
@@ -78,8 +81,6 @@ class ImageSlicer():
                                 self.lower_pad_size[1].tolist(),
                                 self.upper_pad_size[1].tolist()
                                 )
-        print(self.image_array.shape)
-        print(self.target_array.shape)
 
         self.image_generator  = SlicePatchGenerator(
                                     image_array = self.image_array,
@@ -192,3 +193,17 @@ class ImageSlicer():
                         np.save(str(target_nonmasked_sace_path), tpa)
 
                 pbar.update(1)
+
+    def insertToPredictedArray(self, index, pre_array):
+        """ Insert predicted array. """
+        self.predicted_array[index] += pre_array
+
+    def outputRestoredImage(self):
+        self.predicted_array = croppingForNumpy(
+                                self.predicted_array,
+                                self.lower_pad_size[1].tolist(),
+                                self.upper_pad_size[1].tolist()
+                                )
+        predicted = getImageWithMeta(self.predicted_array, self.org)
+
+        return predicted

@@ -67,10 +67,13 @@ readonly INPUT_NAME=$(cat ${JSON_FILE} | jq -r ".input_name")
 readonly TRANSLATE_NAME=$(cat ${JSON_FILE} | jq -r ".translate_name")
 readonly MODEL_NAME=$(cat ${JSON_FILE} | jq -r ".model_name")
 readonly MASK_NAME=$(cat ${JSON_FILE} | jq -r ".mask_name")
-readonly INPUT_PATCH_SIZE=$(cat ${JSON_FILE} | jq -r ".input_patch_size")
-readonly TARGET_PATCH_SIZE=$(cat ${JSON_FILE} | jq -r ".target_patch_size")
+readonly INPUT_PATCH_WIDTH=$(cat ${JSON_FILE} | jq -r ".input_patch_width")
+readonly TARGET_PATCH_WIDTH=$(cat ${JSON_FILE} | jq -r ".target_patch_width")
+readonly PLANE_SIZE=$(cat ${JSON_FILE} | jq -r ".plane_size")
+readonly OVERLAP=$(cat ${JSON_FILE} | jq -r ".overlap")
 readonly AXIS=$(cat ${JSON_FILE} | jq -r ".axis")
-readonly SLIDE=$(cat ${JSON_FILE} | jq -r ".slide")
+readonly MIN_VALUE=$(cat ${JSON_FILE} | jq -r ".min_value")
+readonly MAX_VALUE=$(cat ${JSON_FILE} | jq -r ".max_value")
 
 if $RUN_TRAINING; then
  echo "---------- Training ----------"
@@ -110,21 +113,21 @@ if $RUN_TRANSLATING; then
   save_path="${DATASET_PATH}/segmentation/case_${number}/${TRANSLATE_NAME}"
 
   mask=`generateArgument $MASK_NAME --mask_image_path "${data}/${MASK_NAME}"`
-  slide=`generateArgument $SLIDE --slide`
-  input_patch_size=`generateArgument $INPUT_PATCH_SIZE --input_patch_size`
-  target_patch_size=`generateArgument $TARGET_PATCH_SIZE --target_patch_size`
+  plane_size=`generateArgument $PLANE_SIZE --plane_size`
 
   printVarInfo image_path
   printVarInfo model_path
   printVarInfo save_path
   printVarInfo MASK_NAME
-  printVarInfo INPUT_PATCH_SIZE
-  printVarInfo TARGET_PATCH_SIZE
+  printVarInfo INPUT_PATCH_WIDTH
+  printVarInfo TARGET_PATCH_WIDTH
+  printVarInfo PLANE_SIZE
+  printVarInfo OVERLAP 
   printVarInfo AXIS
-  printVarInfo SLIDE
-  printVarInfo 
+  printVarInfo MIN_VALUE
+  printVarInfo MAX_VALUE
 
-  python3 translate.py ${image_path} ${model_path} ${save_path} --axis ${AXIS} --gpu_ids ${GPU_IDS} ${mask} ${slide} ${input_patch_size} ${target_patch_size}
+  python3 translate.py ${image_path} ${model_path} ${save_path} ${mask} --input_patch_width ${INPUT_PATCH_WIDTH} --target_patch_width ${TARGET_PATCH_WIDTH} ${plane_size} --overlap ${OVERLAP} --axis ${AXIS} --min_value ${MIN_VALUE} --max_value ${MAX_VALUE} --gpu_ids ${GPU_IDS} 
 
  done
 else

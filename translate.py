@@ -9,7 +9,7 @@ import SimpleITK as sitk
 from pathlib import Path
 from utils.machineLearning.predict import Predictor as Translater
 from imageSlicer import ImageSlicer
-from utils.utils import getSizeFromString, isMasked
+from utils.utils import getSizeFromStringElseNone, isMasked
 from model.pix2pix.transform import Pix2PixTransform
 
 def parseArgs():
@@ -19,12 +19,13 @@ def parseArgs():
     parser.add_argument("model_path", help="$HOME/latest.pkl")
     parser.add_argument("save_path", help="$HOME/case_00/translate.mha")
     parser.add_argument("--mask_path") 
-    parser.add_argument("--input_patch_size")
-    parser.add_argument("--target_patch_size")
+    parser.add_argument("--input_patch_width", default=1, type=int)
+    parser.add_argument("--target_patch_width", default=1, type=int)
+    parser.add_argument("--plane_size")
+    parser.add_argument("--overlap", type=int, default=1)
     parser.add_argument("--axis", default=0, type=int)
     parser.add_argument("--min_value", default=-300., type=float)
     parser.add_argument("--max_value", default=300, type=float)
-    parser.add_argument("--slide")
     parser.add_argument("--gpu_ids", type=int, nargs="*", default=[0])
     
     args = parser.parse_args()
@@ -43,29 +44,19 @@ def main(args):
     else:
         mask = None
 
-    if args.input_patch_size is None:
-        input_patch_size = None
-    else:
-        input_patch_size  = getSizeFromString(args.input_patch_size, digit=2)
-    if args.target_patch_size is None:
-        target_patch_size = None
-    else:
-        target_patch_size = getSizeFromString(args.target_patch_size, digit=2)
-
-    if args.slide is not None:
-        slide = getSizeFromString(args.slide, digit=2)
-    else:
-        slide = None
+    plane_size = getSizeFromStringElseNone(args.plane_size, digit=2)
 
     image_slicer = ImageSlicer(
-                    image,
-                    dummy,
-                    input_patch_size  = input_patch_size,
-                    target_patch_size = target_patch_size,
-                    slide             = slide,
-                    axis              = args.axis,
-                    mask_image        = mask
+                    image              = image,
+                    target             = dummy,
+                    image_patch_width  = args.input_patch_width,
+                    target_patch_width = args.target_patch_width,
+                    plane_size         = plane_size,
+                    overlap            = args.overlap,
+                    axis               = args.axis,
+                    mask               = mask
                     )
+ 
 
     with open(args.model_path, "rb") as f:
         model = cloudpickle.load(f)
