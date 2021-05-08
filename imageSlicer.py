@@ -33,7 +33,7 @@ class ImageSlicer():
         self.target_patch_width = target_patch_width
 
         if plane_size is None:
-            self.plane_size = getPlaneSize(self.image_array.shape, axis)
+            self.plane_size = self.getPlaneSize(self.image_array.shape, axis)
         else:
             self.plane_size = plane_size
 
@@ -54,9 +54,9 @@ class ImageSlicer():
         return self.target_array.shape[self.axis] 
 
     def setGenerator(self):
-        self.image_array, _  = self.adjustArraySizeInPlane(self.image_array, self.plane_size, self.axis)
-        self.target_array, _ = self.adjustArraySizeInPlane(self.target_array, self.plane_size, self.axis)
-        self.mask_array, _   = self.adjustArraySizeInPlane(self.mask_array, self.plane_size, self.axis)
+        self.image_array, _          = self.adjustArraySizeInPlane(self.image_array, self.plane_size, self.axis)
+        self.target_array, self.diff = self.adjustArraySizeInPlane(self.target_array, self.plane_size, self.axis)
+        self.mask_array, _           = self.adjustArraySizeInPlane(self.mask_array, self.plane_size, self.axis)
 
         self.lower_pad_size, self.upper_pad_size = calculatePaddingSize(
                                                     self.image_array.shape,
@@ -199,11 +199,20 @@ class ImageSlicer():
         self.predicted_array[index] += pre_array
 
     def outputRestoredImage(self):
-        self.predicted_array = croppingForNumpy(
+        predicted_array = croppingForNumpy(
                                 self.predicted_array,
                                 self.lower_pad_size[1].tolist(),
                                 self.upper_pad_size[1].tolist()
                                 )
-        predicted = getImageWithMeta(self.predicted_array, self.org)
+
+        lower_size = (abs(self.diff) // 2).tolist()
+        upper_size = ((abs(self.diff) + 1) // 2).tolist()
+        if (self.diff < 0).any():
+            predicted_array = paddingForNumpy(predicted_array, lower_size, upper_size)
+        else:
+            predicted_array = croppingForNumpy(predicted_array, lower_size, upper_size)
+
+        predicted = getImageWithMeta(predicted_array, self.org)
+
 
         return predicted
