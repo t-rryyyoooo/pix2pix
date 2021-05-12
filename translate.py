@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 import torch
 import cloudpickle
+import pickle5
 from tqdm import tqdm
 import SimpleITK as sitk
 from pathlib import Path
@@ -59,7 +60,10 @@ def main(args):
  
 
     with open(args.model_path, "rb") as f:
-        model = cloudpickle.load(f)
+        try:
+            model = cloudpickle.load(f)
+        except ValueError:
+            model = pickle5.load(f)
         model = torch.nn.DataParallel(model, device_ids=args.gpu_ids)
 
     model.eval()
