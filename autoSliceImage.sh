@@ -48,18 +48,6 @@ do
  input="${data}/${INPUT_NAME}"
  target="${data}/${TARGET_NAME}"
 
- echo "input:${input}"
- echo "target:${target}"
- echo "SAVE_DIRECTORY:${SAVE_DIRECTORY}"
- echo "patient_id:${number}"
- echo "INPUT_PATCH_WIDTH:${INPUT_PATCH_WIDTH}"
- echo "TAREGT_PATCH_WIDTH:${TARGET_PATCH_WIDTH}"
- echo "OVRELAP:${OVRELAP}"
- echo "AXIS:${AXIS}"
- echo "SAVE_INPUT_NAME:${SAVE_INPUT_NAME}"
- echo "SAVE_TARGET_NAME:${SAVE_TARGET_NAME}"
- echo "WITH_NONMASK:${WITH_NONMASK}"
-
  generateArgument(){
   if [ $1 = "No" ];then
    echo ""
@@ -77,8 +65,6 @@ do
  mask=`generateArgument $MASK_NAME --mask_image_path "${data}/${MASK_NAME}"`
  plane_size=`generateArgument ${PLANE_SIZE} --plane_size`
 
- echo "mask:${mask}"
- echo "plane_size:${plane_size}"
 
  if [ $MASK_NAME = "No" ];then
   if $WITH_NONMASK ;then

@@ -3,7 +3,7 @@ import sys
 import pytorch_lightning as pl
 sys.path.append("..")
 from model.pix2pix.system import Pix2PixSystem
-from utils.utils import setSeed
+from utils.utils import setSeed, printArgs
 from pytorch_lightning.loggers import TensorBoardLogger
 
 def parseArgs():
@@ -34,6 +34,7 @@ def parseArgs():
     return args
 
 def main(args):
+    printArgs(args)
     setSeed()
     criteria = {
             "train" : args.train_list,

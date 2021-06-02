@@ -10,7 +10,7 @@ import SimpleITK as sitk
 from pathlib import Path
 from utils.machineLearning.predict import Predictor as Translater
 from imageSlicer import ImageSlicer
-from utils.utils import getSizeFromStringElseNone, isMasked
+from utils.utils import getSizeFromStringElseNone, isMasked, printArgs
 from model.pix2pix.transform import Pix2PixTransform
 
 def parseArgs():
@@ -34,6 +34,8 @@ def parseArgs():
     return args
 
 def main(args):
+    printArgs(args)
+
     image = sitk.ReadImage(args.image_path)
     dummy = sitk.Image(image.GetSize(), sitk.sitkInt8)
     dummy.SetOrigin(image.GetOrigin())

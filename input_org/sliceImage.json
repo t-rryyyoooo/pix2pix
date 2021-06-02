@@ -1,7 +1,7 @@
 {
-    "data_directory" : "/sandisk/data/tsukubaData/allData",
-    "save_directory" : "/sandisk/data/patch/tsukubaData/allData/5-512-512",
-    "input_patch_width" : 5,
+    "data_directory" : "$HOME/Desktop/data/tsukubaData/allData",
+    "save_directory" : "$HOME/Desktop/data/patch/tsukubaData/allData/1-512-512",
+    "input_patch_width" : 1,
     "target_patch_width" : 1,
     "plane_size" : "512-512",
     "input_name" : "SE3_resampled.nii.gz",

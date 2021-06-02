@@ -12,11 +12,6 @@
   fi
  }
 
-printVarInfo(){
- #[ -n "$1" ] && printf "%7s : %s\n" "$1" ${!1:-(null)}
- echo "$1 : ${!1:-(null)}"
-}
-
 readonly INPUT_DIRECTORY="input"
 JSON_NAME=${0//.sh/.json}
 
@@ -62,17 +57,6 @@ slide=`generateArgument $SLIDE --slide`
 input_patch_width=`generateArgument $INPUT_PATCH_WIDTH --input_patch_width`
 target_patch_width=`generateArgument $TARGET_PATCH_WIDTH --target_patch_width`
 plane_size=`generateArgument $PLANE_SIZE --plane_size`
-
-printVarInfo image_path
-printVarInfo MODEL_PATH
-printVarInfo save_path
-printVarInfo MASK_NAME
-printVarInfo INPUT_PATCH_WIDTH
-printVarInfo TARGET_PATCH_WIDTH
-printVarInfo AXIS
-printVarInfo SLIDE
-printVarInfo PLANE_SIZE
-printVarInfo GPU_IDS
 
 python3 translate.py ${image_path} ${MODEL_PATH} ${save_path} --axis ${AXIS} --gpu_ids ${GPU_IDS} ${mask} ${slide} ${input_patch_width} ${target_patch_width} ${plane_size}
 

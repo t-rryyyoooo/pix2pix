@@ -47,15 +47,6 @@ do
  input="${data}/${INPUT_NAME}"
  target="${data}/${TARGET_NAME}"
 
- echo "input:${input}"
- echo "target:${target}"
- echo "SAVE_DIRECTORY:${SAVE_DIRECTORY}"
- echo "patient_id:${number}"
- echo "AXIS:${AXIS}"
- echo "SAVE_INPUT_NAME:${SAVE_INPUT_NAME}"
- echo "SAVE_TARGET_NAME:${SAVE_TARGET_NAME}"
- echo "WITH_NONMASK:${WITH_NONMASK}"
-
  generateArgument(){
   if [ $1 = "No" ];then
    echo ""
@@ -74,11 +65,6 @@ do
  input_patch_size=`generateArgument $INPUT_PATCH_SIZE --input_patch_size`
  target_patch_size=`generateArgument $TARGET_PATCH_SIZE --target_patch_size`
  slide=`generateArgument $SLIDE --slide`
-
- echo "mask:${mask}"
- echo "INPUT_PATCH_SIZE:${INPUT_PATCH_SIZE}"
- echo "TARGET_PATCH_SIZE:${TARGET_PATCH_SIZE}"
- echo "SLIDE:${SLIDE}"
 
  if [ $MASK_NAME = "No" ];then
   if $WITH_NONMASK ;then

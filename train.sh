@@ -12,11 +12,6 @@
   fi
  }
 
-printVarInfo(){
- #[ -n "$1" ] && printf "%7s : %s\n" "$1" ${!1:-(null)}
- echo "$1 : ${!1:-(null)}"
-}
-
 readonly INPUT_DIRECTORY="input"
 JSON_NAME=${0//.sh/.json}
 
@@ -57,27 +52,8 @@ readonly NGF=$(cat ${JSON_FILE} | jq -r ".ngf")
 readonly EPOCH=$(cat ${JSON_FILE} | jq -r ".epoch")
 readonly GPU_IDS=$(cat ${JSON_FILE} | jq -r ".gpu_ids")
 
-printVarInfo DATASET_PATH
-printVarInfo LOG_PATH
-printVarInfo TRAIN_LIST
-printVarInfo VAL_LIST
-printVarInfo TEST_LIST
-printVarInfo NUM_COLUMNS
-printVarInfo LR
-printVarInfo L1_LAMBDA
-printVarInfo BATCH_SIZE
-printVarInfo NUM_WORKERS
-printVarInfo G_INPUT_CH
-printVarInfo G_OUTPUT_CH
-printVarInfo G_NAME
-printVarInfo D_INPUT_CH
-printVarInfo D_NAME
-printVarInfo D_N_LAYERS
-printVarInfo NGF
-printVarInfo EPOCH
-printVarInfo GPU_IDS
-
 python3 train.py ${DATASET_PATH} ${LOG_PATH} --train_list ${TRAIN_LIST} --val_list ${VAL_LIST} --test_list ${TEST_LIST} --num_columns ${NUM_COLUMNS} --lr ${LR} --batch_size ${BATCH_SIZE} --num_workers ${NUM_WORKERS} --G_input_ch ${G_INPUT_CH} --G_output_ch ${G_OUTPUT_CH} --G_name ${G_NAME} --D_input_ch ${D_INPUT_CH} --D_name ${D_NAME} --ngf ${NGF} --epoch ${EPOCH} --gpu_ids ${GPU_IDS} --D_n_layers ${D_N_LAYERS}
+
 
 readonly IP_ADDR=`hostname -I | cut -d ' ' -f1`
 JSON_SAVE_NAME="${IP_ADDR}.json"

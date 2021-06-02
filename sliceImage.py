@@ -3,7 +3,7 @@ import SimpleITK as sitk
 import numpy as np
 import sys
 sys.path.append("..")
-from utils.utils import sitkReadImageElseNone, getSizeFromStringElseNone
+from utils.utils import sitkReadImageElseNone, getSizeFromStringElseNone, printArgs
 from imageSlicer import ImageSlicer
 
 def parseArgs():
@@ -28,6 +28,8 @@ def parseArgs():
     return args
 
 def main(args):
+    printArgs(args)
+
     input_image  = sitk.ReadImage(args.input_image_path)
     target_image = sitk.ReadImage(args.target_image_path)
     mask_image   = sitkReadImageElseNone(args.mask_image_path)
